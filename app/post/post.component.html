@@ -1,0 +1,482 @@
+﻿<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">New post</h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10">
+                    <ul>
+                        <li *ngFor="let car of post.cars; let i = index;">
+                                <p>Car {{i + 1}}</p>
+                                <div class="form-group" [ngClass]="{ 'has-error':  !mark.valid }">
+                                    <label for="mark">Mark</label>
+                                    <input type="text" class="form-control" name="mark" [(ngModel)]="car.mark" #mark="ngModel" required />
+                                    <div *ngIf="mark.size && !mark.valid" class="help-block">Mark is required</div>
+                                </div>
+                                <div class="form-group" [ngClass]="{ 'has-error': !model.valid }">
+                                    <label for="model">Model</label>
+                                    <input type="text" class="form-control" name="model" [(ngModel)]="car.model" #model="ngModel" required />
+                                    <div *ngIf="model.size && !model.valid" class="help-block">Model is required</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stateNumber">State Number</label>
+                                    <input type="text" class="form-control" name="model" [(ngModel)]="car.stateNumber" #stateNumber="ngModel" />
+                                    <!--<div *ngIf="f.submitted && !model.valid" class="help-block">Model is required</div>-->
+                                </div>
+                                <div class="form-group" [ngClass]="{ 'has-error': !color.valid }">
+                                    <label for="color">Color</label>
+                                    <input type="text" class="form-control" name="color" [(ngModel)]="car.color" #color="ngModel" required />
+                                    <div *ngIf="color.size && !color.valid" class="help-block">Color is required</div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" (click)="deleteCar(i)">Delete car</button>
+                                </div>
+                        </li>
+                    </ul>
+                </div>
+            <div class="form-group">
+            <a class="btn btn-primary" (click)="addCar()">Add new car</a>
+            </div>
+        </div>
+        <div>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+                                <li><a>File upload</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <form>
+                            <div class="form-group">
+                                <label for="multiple">Add files</label>
+                                <input type="file" class="form-control" name="multiple" ng2FileSelect [uploader]="uploader" multiple  />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Image upload</h3>
+                        Queue length: {{ uploader?.queue?.length }}
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th width="50%">Name</th>
+                                <th>Size</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let item of uploader.queue">
+                                <td><strong>{{ item.file.name }}</strong></td>
+                                <td nowrap>{{ item.file.size/1024/1024 | number:'.2' }} MB</td>
+                                <td nowrap>
+                                    <button type="button" class="btn btn-success btn-xs"
+                                            (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                                        <span class="glyphicon glyphicon-upload"></span> Upload
+                                    </button>
+                                    <button type="button" class="btn btn-warning btn-xs"
+                                            (click)="item.cancel()" [disabled]="!item.isUploading">
+                                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-xs"
+                                            (click)="item.remove()">
+                                        <span class="glyphicon glyphicon-trash"></span> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button type="button" class="btn btn-success btn-s"
+                                    (click)="uploader.uploadAll(); hello();" [disabled]="!uploader.getNotUploadedItems().length">
+                                <span class="glyphicon glyphicon-upload"></span> Upload all
+                            </button>
+                            <button type="button" class="btn btn-warning btn-s"
+                                    (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                            </button>
+                            <button type="button" class="btn btn-danger btn-s"
+                                    (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                                <span class="glyphicon glyphicon-trash"></span> Remove all
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="container-fluid">
+                <p></p>
+                <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" novalidate>
+                    <div class="form-group label-floating">
+                        <label class="control-label">Country</label>
+                        <select class="form-control" name ="country" [ngModel]="post.country" (ngModelChange)="post.country = $event;" required>
+                            <option value="NL">Netherlands</option>
+                            <option value="SE">Sweden</option>
+                            <option value="DK">Denmark</option>
+                        </select>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !address.valid }">
+                        <label for="model">Address</label>
+                        <input type="text" class="form-control" name="address" [(ngModel)]="post.address" #address="ngModel" required />
+                        <div *ngIf="f.submitted && !address.valid" class="help-block">Address is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDate">Input date:</label>
+                        <input type="date" class="form-control" name="date" [(ngModel)]="post.Date" #date="ngModel" required >
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Posts</h3>
+    </div>
+    <div class="panel panel-default post">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <div *ngIf="posts.length == 0"><p>Posts 0</p></div>
+                    <ul>
+                        <li *ngFor="let item of posts; let i = index;">
+                            <p>Post {{i + 1}}</p>
+                            <div class="panel panel-default post">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div class="form-group">
+                                                <label for="mark">Country : {{ item.country }}</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="model">Address : {{ item.address }}</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="stateNumber">Date : {{ item.date }}</label>
+                                            </div>
+                                            <ul>
+                                                <li *ngFor="let itemCar of item.cars; let j = index;">
+                                                    <p>Car {{ j + 1 }}</p>
+                                                    <div class="form-group">
+                                                        <label for="stateNumber">Mark : {{ itemCar.mark }}</label>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="stateNumber">Model : {{ itemCar.model }}</label>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="stateNumber">State Number : {{ itemCar.stateNumber }}</label>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="stateNumber">Color : {{ itemCar.color }}</label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="panel panel-default post">-->
+    <!--<div class="panel-body">-->
+        <!--<div class="row">-->
+            <!--<div class="col-sm-2">-->
+                <!--<a href="profile.html" class="post-avatar thumbnail"><img src="img/user.png" alt=""><div class="text-center">DevUser1</div></a>-->
+                <!--<div class="likes text-center">7 Likes</div>-->
+            <!--</div>-->
+            <!--<div class="col-sm-10">-->
+                <!--<div class="bubble">-->
+                    <!--<div class="pointer">-->
+                        <!--<p>Hey I was wondering if you wanted to go check out the football game later. I heard they are supposed to be really good!</p>-->
+                    <!--</div>-->
+                    <!--<div class="pointer-border"></div>-->
+                <!--</div>-->
+                <!--<p class="post-actions"><a href="#">Comment</a> - <a href="#">Like</a> - <a href="#">Follow</a> - <a href="#">Share</a></p>-->
+                <!--<div class="comment-form">-->
+                    <!--<form class="form-inline">-->
+                        <!--<div class="form-group">-->
+                            <!--<input type="text" class="form-control" placeholder="enter comment">-->
+                        <!--</div>-->
+                        <!--<button type="submit" class="btn btn-default">Add</button>-->
+                    <!--</form>-->
+                <!--</div>-->
+                <!--<div class="clearfix"></div>-->
+
+                <!--<div class="comments">-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="panel panel-default post">-->
+    <!--<div class="panel-body">-->
+        <!--<div class="row">-->
+            <!--<div class="col-sm-2">-->
+                <!--<a href="profile.html" class="post-avatar thumbnail"><img src="img/user.png" alt=""><div class="text-center">DevUser1</div></a>-->
+                <!--<div class="likes text-center">7 Likes</div>-->
+            <!--</div>-->
+            <!--<div class="col-sm-10">-->
+                <!--<div class="bubble">-->
+                    <!--<div class="pointer">-->
+                        <!--<p>Hey I was wondering if you wanted to go check out the football game later. I heard they are supposed to be really good!</p>-->
+                    <!--</div>-->
+                    <!--<div class="pointer-border"></div>-->
+                <!--</div>-->
+                <!--<p class="post-actions"><a href="#">Comment</a> - <a href="#">Like</a> - <a href="#">Follow</a> - <a href="#">Share</a></p>-->
+                <!--<div class="comment-form">-->
+                    <!--<form class="form-inline">-->
+                        <!--<div class="form-group">-->
+                            <!--<input type="text" class="form-control" placeholder="enter comment">-->
+                        <!--</div>-->
+                        <!--<button type="submit" class="btn btn-default">Add</button>-->
+                    <!--</form>-->
+                <!--</div>-->
+                <!--<div class="clearfix"></div>-->
+
+                <!--<div class="comments">-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="panel panel-default post">-->
+    <!--<div class="panel-body">-->
+        <!--<div class="row">-->
+            <!--<div class="col-sm-2">-->
+                <!--<a href="profile.html" class="post-avatar thumbnail"><img src="img/user.png" alt=""><div class="text-center">DevUser1</div></a>-->
+                <!--<div class="likes text-center">7 Likes</div>-->
+            <!--</div>-->
+            <!--<div class="col-sm-10">-->
+                <!--<div class="bubble">-->
+                    <!--<div class="pointer">-->
+                        <!--<p>Hey I was wondering if you wanted to go check out the football game later. I heard they are supposed to be really good!</p>-->
+                    <!--</div>-->
+                    <!--<div class="pointer-border"></div>-->
+                <!--</div>-->
+                <!--<p class="post-actions"><a href="#">Comment</a> - <a href="#">Like</a> - <a href="#">Follow</a> - <a href="#">Share</a></p>-->
+                <!--<div class="comment-form">-->
+                    <!--<form class="form-inline">-->
+                        <!--<div class="form-group">-->
+                            <!--<input type="text" class="form-control" placeholder="enter comment">-->
+                        <!--</div>-->
+                        <!--<button type="submit" class="btn btn-default">Add</button>-->
+                    <!--</form>-->
+                <!--</div>-->
+                <!--<div class="clearfix"></div>-->
+
+                <!--<div class="comments">-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                    <!--<div class="comment">-->
+                        <!--<a href="#" class="comment-avatar pull-left"><img src="img/user.png" alt=""></a>-->
+                        <!--<div class="comment-text">-->
+                            <!--<p>I am just going to paste in a paragraph, then we will add another clearfix.</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+
+
+
+
+
+
+        <!--<form>-->
+        <!--<div class="form-group label-floating">-->
+        <!--<label class="control-label">Country</label>-->
+        <!--<select [ngModel]="country" (ngModelChange)="country = $event; address = null;" class="form-control">-->
+        <!--<option value="NL">Netherlands</option>-->
+        <!--<option value="SE">Sweden</option>-->
+        <!--<option value="DK">Denmark</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--<div class="form-group label-floating">-->
+        <!--<label class="control-label">Address</label>-->
+        <!--<address-autocomplete-->
+        <!--[country]="country"-->
+        <!--[placeholderStreet]="'SnappCar Street 6...'"-->
+        <!--[placeholderHouseNumber]="'housenumber...'"-->
+        <!--[placeholderPostalCode]="'postalcode...'"-->
+        <!--[address]="address"-->
+        <!--(onAddress)="address = $event">-->
+        <!--</address-autocomplete>-->
+        <!--</div>-->
+        <!--</form>-->
+
+        <!--<form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" novalidate>-->
+        <!--<ul>-->
+        <!--<li *ngFor="let car of post.cars; let i = index;">-->
+        <!--<div class="container">-->
+        <!--<p>Car {{i + 1}}</p>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !mark.valid }">-->
+        <!--<label for="mark">Mark</label>-->
+        <!--<input type="text" class="form-control" name="mark" value="{{car.mark}}" [(ngModel)]="car.mark" #mark="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !mark.valid" class="help-block">Mark is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !model.valid }">-->
+        <!--<label for="model">Model</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.model" #model="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !model.valid" class="help-block">Model is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted }">-->
+        <!--<label for="stateNumber">State Number</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.stateNumber" #stateNumber="ngModel" />-->
+        <!--&lt;!&ndash;<div *ngIf="f.submitted && !model.valid" class="help-block">Model is required</div>&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !color.valid }">-->
+        <!--<label for="color">Color</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.color" #color="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !color.valid" class="help-block">Color is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<button class="btn btn-primary" (click)="deleteCar(i)">Delete car</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--<div class="form-group">-->
+        <!--<a class="btn btn-primary" (click)="addCar()">Add new car</a>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<<button [disabled]="loading" class="btn btn-primary">Submit</button>-->
+        <!--</div>-->
+
+        <!--</form>-->
+
+        <!--<div class="">-->
+        <!--<ul>-->
+        <!--<li *ngFor="let car of post.cars; let i = index;">-->
+        <!--<div class="container">-->
+        <!--<p>Car {{i + 1}}</p>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error':  !mark.valid }">-->
+        <!--<label for="mark">Mark</label>-->
+        <!--<input type="text" class="form-control" name="mark" value="{{car.mark}}" [(ngModel)]="car.mark" #mark="ngModel" required />-->
+        <!--<div *ngIf="mark.size && !mark.valid" class="help-block">Mark is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': !model.valid }">-->
+        <!--<label for="model">Model</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.model" #model="ngModel" required />-->
+        <!--<div *ngIf="model.size && !model.valid" class="help-block">Model is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label for="stateNumber">State Number</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.stateNumber" #stateNumber="ngModel" />-->
+        <!--&lt;!&ndash;<div *ngIf="f.submitted && !model.valid" class="help-block">Model is required</div>&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': !color.valid }">-->
+        <!--<label for="color">Color</label>-->
+        <!--<input type="text" class="form-control" name="model" [(ngModel)]="car.color" #color="ngModel" required />-->
+        <!--<div *ngIf="color.size && !color.valid" class="help-block">Color is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<button class="btn btn-primary" (click)="deleteCar(i)">Delete car</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--<div class="form-group">-->
+        <!--<a class="btn btn-primary" (click)="addCar()">Add new car</a>-->
+        <!--</div>-->
+        <!--</div>-->
+
+
+
+
+
+
+
+        <!--<form name="form" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">-->
+        <!--<label for="firstName">First Name</label>-->
+        <!--<input type="text" class="form-control" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !firstName.valid" class="help-block">First Name is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">-->
+        <!--<label for="lastName">Last Name</label>-->
+        <!--<input type="text" class="form-control" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !lastName.valid" class="help-block">Last Name is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">-->
+        <!--<label for="username">Username</label>-->
+        <!--<input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">-->
+        <!--<label for="password">Password</label>-->
+        <!--<input type="password" class="form-control" name="password" [(ngModel)]="model.password" #password="ngModel" required />-->
+        <!--<div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<button [disabled]="loading" class="btn btn-primary">Register</button>-->
+        <!--<img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />-->
+        <!--</div>-->
+        <!--</form>-->
+
+
+
+        <!--<form>-->
+        <!--<div class="form-group">-->
+        <!--<textarea class="form-control" placeholder="Write on the wall"></textarea>-->
+        <!--</div>-->
+        <!--<button type="submit" class="btn btn-default">Submit</button>-->
+        <!--<div class="pull-right">-->
+        <!--<div class="btn-toolbar">-->
+        <!--<button type="button" class="btn btn-default"><i class="fa fa-pencil"></i>Text</button>-->
+        <!--<button type="button" class="btn btn-default"><i class="fa fa-file-image-o"></i>Image</button>-->
+        <!--<button type="button" class="btn btn-default"><i class="fa fa-file-video-o"></i>Video</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</form>-->

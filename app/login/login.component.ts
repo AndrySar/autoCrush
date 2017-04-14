@@ -1,14 +1,17 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { AlertService, AuthenticationService } from '../_services/index';
+import { AuthenticationService } from '../services/index';
+import { AuthGuard } from '../guards/auth.guard';
+import {UserService} from "../services/user.service";
 
 @Component({
     moduleId: module.id,
+    selector: 'login',
     templateUrl: 'login.component.html'
 })
 
-export class LoginComponent implements OnInit {
+export class LoginComponent {
     model: any = {};
     loading = false;
     returnUrl: string;
@@ -17,14 +20,9 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private alertService: AlertService) { }
+        private auth: AuthGuard) {
 
-    ngOnInit() {
-        // reset login status
-        this.authenticationService.logout();
-
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.returnUrl = '/';
     }
 
     login() {
@@ -35,8 +33,23 @@ export class LoginComponent implements OnInit {
                     this.router.navigate([this.returnUrl]);
                 },
                 error => {
-                    this.alertService.error(error);
+                    console.log(error);
                     this.loading = false;
                 });
+    }
+
+    logout() {
+        this.authenticationService.logout();
+        this.router.navigate(['/register']);
+    }
+
+    isAuthentication() {
+        return this.auth.canAuthentication();
+    }
+
+    getUser() {
+        if(this.auth.canAuthentication()) {
+            return JSON.parse(localStorage.getItem('currentUser')).user;
+        }
     }
 }
